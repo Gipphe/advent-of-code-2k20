@@ -1,0 +1,47 @@
+conf_layout:
+  lconfig_indentPolicy: IndentPolicyLeft
+  lconfig_indentAmount: 4
+  lconfig_hangingTypeSignature: true
+conf_forward:
+  options_ghc:
+    - -XBangPatterns
+    - -XConstraintKinds
+    - -XDataKinds
+    - -XDefaultSignatures
+    - -XDeriveFoldable
+    - -XDeriveFunctor
+    - -XDeriveGeneric
+    - -XDeriveTraversable
+    - -XDerivingStrategies
+    - -XDoAndIfThenElse
+    - -XDuplicateRecordFields
+    - -XEmptyCase
+    - -XEmptyDataDecls
+    - -XExistentialQuantification
+    - -XFlexibleContexts
+    - -XFlexibleInstances
+    - -XFunctionalDependencies
+    - -XGADTs
+    - -XGeneralizedNewtypeDeriving
+    - -XInstanceSigs
+    - -XKindSignatures
+    - -XLambdaCase
+    - -XMultiParamTypeClasses
+    - -XMultiWayIf
+    - -XNamedFieldPuns
+    - -XNumericUnderscores
+    - -XOverloadedStrings
+    - -XPartialTypeSignatures
+    - -XPatternGuards
+    - -XPatternSynonyms
+    - -XPolyKinds
+    - -XRankNTypes
+    - -XScopedTypeVariables
+    - -XStandaloneDeriving
+    - -XStrictData
+    - -XTupleSections
+    - -XTypeApplications
+    - -XTypeFamilies
+    - -XTypeFamilyDependencies
+    - -XTypeOperators
+    - -XViewPatterns

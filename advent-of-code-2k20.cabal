@@ -1,0 +1,74 @@
+cabal-version: 1.12
+
+-- This file has been generated from package.yaml by hpack version 0.33.0.
+--
+-- see: https://github.com/sol/hpack
+--
+-- hash: 27b70999a250a197c2b24dbaf06501fe3f304de0805d7f7a2c714e9fcc2e6a15
+
+name:           advent-of-code-2k20
+version:        0.1.0.0
+description:    Please see the README on GitHub at <https://github.com/gipphe/advent-of-code-2k20#readme>
+homepage:       https://github.com/gipphe/advent-of-code-2k20#readme
+bug-reports:    https://github.com/gipphe/advent-of-code-2k20/issues
+author:         Victor Nascimento Bakke
+maintainer:     Victor Nascimento Bakke
+copyright:      2020 Victor Nascimento Bakke
+license:        BSD3
+license-file:   LICENSE
+build-type:     Simple
+extra-source-files:
+    README.md
+    CHANGELOG.md
+
+source-repository head
+  type: git
+  location: https://github.com/gipphe/advent-of-code-2k20
+
+library
+  exposed-modules:
+      Day1
+      Day2
+      Day3
+      Day4
+      Lib
+      Util
+  other-modules:
+      Paths_advent_of_code_2k20
+  hs-source-dirs:
+      src
+  ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wpartial-fields -Wredundant-constraints -flate-specialise -fspecialise-aggressively
+  build-depends:
+      base >=4.7 && <5
+    , megaparsec
+    , parser-combinators
+  default-language: Haskell2010
+
+executable advent-of-code-2k20-exe
+  main-is: Main.hs
+  other-modules:
+      Paths_advent_of_code_2k20
+  hs-source-dirs:
+      app
+  ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wpartial-fields -Wredundant-constraints -flate-specialise -fspecialise-aggressively -threaded -rtsopts -with-rtsopts=-N
+  build-depends:
+      advent-of-code-2k20
+    , base >=4.7 && <5
+    , megaparsec
+    , parser-combinators
+  default-language: Haskell2010
+
+test-suite advent-of-code-2k20-test
+  type: exitcode-stdio-1.0
+  main-is: Spec.hs
+  other-modules:
+      Paths_advent_of_code_2k20
+  hs-source-dirs:
+      test
+  ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wpartial-fields -Wredundant-constraints -flate-specialise -fspecialise-aggressively -threaded -rtsopts -with-rtsopts=-N
+  build-depends:
+      advent-of-code-2k20
+    , base >=4.7 && <5
+    , megaparsec
+    , parser-combinators
+  default-language: Haskell2010
