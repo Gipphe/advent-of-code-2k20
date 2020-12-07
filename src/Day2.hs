@@ -2,13 +2,7 @@
 {-# LANGUAGE NamedFieldPuns #-}
 {-# LANGUAGE ScopedTypeVariables #-}
 
-module Day2
-    ( day2
-    , day2Task1
-    , day2Task2
-    , someDay2
-    )
-where
+module Day2 where
 
 import Control.Monad.IO.Class (liftIO)
 import Data.Bifunctor (first)
@@ -29,9 +23,9 @@ day2 = do
 
 data Pw = Pw
     { pwFrom :: Int
-    , pwTo :: Int
+    , pwTo   :: Int
     , pwChar :: Char
-    , pwPw :: String
+    , pwPw   :: String
     }
 
 ioInput :: IO [Pw]

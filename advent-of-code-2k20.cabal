@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 27b70999a250a197c2b24dbaf06501fe3f304de0805d7f7a2c714e9fcc2e6a15
+-- hash: 8e8a113c27f4d53ce6eb4d5f1aea77d3b3d333beee7a736b526071ba185a9798
 
 name:           advent-of-code-2k20
 version:        0.1.0.0
@@ -42,6 +42,7 @@ library
       base >=4.7 && <5
     , megaparsec
     , parser-combinators
+    , time
   default-language: Haskell2010
 
 executable advent-of-code-2k20-exe
@@ -56,6 +57,7 @@ executable advent-of-code-2k20-exe
     , base >=4.7 && <5
     , megaparsec
     , parser-combinators
+    , time
   default-language: Haskell2010
 
 test-suite advent-of-code-2k20-test
@@ -71,4 +73,5 @@ test-suite advent-of-code-2k20-test
     , base >=4.7 && <5
     , megaparsec
     , parser-combinators
+    , time
   default-language: Haskell2010

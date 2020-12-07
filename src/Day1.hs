@@ -2,13 +2,7 @@
 {-# LANGUAGE ScopedTypeVariables #-}
 {-# LANGUAGE LambdaCase #-}
 
-module Day1
-    ( day1Task1
-    , day1Task2
-    , day1
-    , someDay1
-    )
-where
+module Day1 where
 
 import Control.Monad.IO.Class (liftIO)
 import Data.List (find)

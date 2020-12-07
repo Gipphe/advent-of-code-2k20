@@ -1,10 +1,7 @@
 {-# LANGUAGE FlexibleContexts #-}
 {-# LANGUAGE DataKinds #-}
 
-module Day3
-    ( someDay3
-    )
-where
+module Day3 where
 
 import Control.Monad.IO.Class (liftIO)
 

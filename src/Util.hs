@@ -15,14 +15,14 @@ module Util
     , safeIndex
     , sumTrue
     , every
-    )
-where
+    ) where
 
+import Data.Time.Clock.POSIX (getPOSIXTime)
 import Control.Monad.IO.Class (MonadIO(..))
 import Data.Proxy (Proxy(..))
 import GHC.TypeLits (KnownNat, Nat, natVal)
 
-data SomeDay = forall n. KnownNat n => SomeDay (Day n ())
+data SomeDay = forall n . KnownNat n => SomeDay (Day n ())
 
 runSomeDay :: SomeDay -> IO ()
 runSomeDay (SomeDay day) = runDay day
@@ -46,13 +46,20 @@ instance MonadIO (Task n) where
 
 runTask :: forall n m a . (KnownNat n, Show a) => Task n a -> Day m ()
 runTask (Task act) = do
-    res <- liftIO act
+    startTime <- liftIO getPOSIXTime
+    res       <- liftIO act
+    endTime   <- liftIO getPOSIXTime
     liftIO
         $  putStrLn
         $  "    Task "
-        <> show (natVal (Proxy @n))
+        <> taskNum
         <> ": "
         <> show res
+        <> "\n    Task "
+        <> taskNum
+        <> ": Took "
+        <> show (endTime - startTime)
+    where taskNum = show (natVal (Proxy @n))
 
 safeIndex :: Int -> [a] -> Maybe a
 safeIndex 0 (x : _) = Just x
