@@ -6,7 +6,6 @@
 
 module Day4 where
 
-import Debug.Trace (trace)
 import Control.Applicative (Alternative, (<|>))
 import Control.Monad ((<=<))
 import Control.Monad.IO.Class (liftIO)
@@ -14,10 +13,10 @@ import Data.Bifunctor (first)
 import Data.Char (isDigit)
 import Data.Functor (($>))
 import Data.Functor.Identity (Identity(..))
-import Data.List (intercalate, span)
+import Data.List (intercalate)
 import Data.Maybe (mapMaybe)
 import Data.Void (Void)
-import Text.Megaparsec (Parsec, parse, try, sepBy, some, choice)
+import Text.Megaparsec (Parsec, parse, sepBy, some, choice)
 import Text.Megaparsec.Char (char, eol, alphaNumChar, string)
 import Text.Read (readMaybe)
 
@@ -86,39 +85,24 @@ validateHarder p = do
             )
             . span isDigit
     validateHcl = \case
-        ss@('#' : rest) -> (\x -> if x then Just ss else Nothing)
-            $ all (\c -> isSingleDigit c || isAlphaHex c) rest
+        ss@('#' : rest) ->
+            flip ifTrue ss . const $ all (\c -> isDigit c || isAlphaHex c) rest
         _ -> Nothing
-      where
-        isSingleDigit c = c >= '0' && c <= '9'
-        isAlphaHex c = c >= 'a' && c <= 'f'
+        where isAlphaHex c = (c >= 'a' && c <= 'f') || (c >= 'A' && c <= 'F')
     validateEcl x
-        | x
-            == "amb"
-            || x
-            == "blu"
-            || x
-            == "brn"
-            || x
-            == "gry"
-            || x
-            == "grn"
-            || x
-            == "hzl"
-            || x
-            == "oth"
-        = Just x
-        | otherwise
-        = Nothing
+        | x `elem` validColors = Just x
+        | otherwise            = Nothing
+        where validColors = ["amb", "blu", "brn", "gry", "grn", "hzl", "oth"]
     validatePid x
         | length x == 9 = Just x
         | otherwise     = Nothing
+    ifTrue :: (a -> Bool) -> a -> Maybe a
     ifTrue p' x
         | p' x      = Just x
         | otherwise = Nothing
     isBetween :: Int -> Int -> String -> Maybe String
     isBetween low high =
-        fmap show . ifTrue (\x -> x > low && x < high) <=< readMaybe
+        fmap show . ifTrue (\x -> x >= low && x <= high) <=< readMaybe
 
 data Field = Field Tag String
     deriving Show
@@ -147,7 +131,7 @@ ioInput =
     either fail pure
         .   parsePassports
         .   intercalate "\n"
-        .   fmap (intercalate " " . lines)
+        .   fmap (unwords . lines)
         .   splitOnDoubleNewline
         =<< readFile "input/day4.txt"
 
@@ -207,9 +191,6 @@ type Parser = Parsec Void String
 splitOnDoubleNewline :: String -> [String]
 splitOnDoubleNewline = go []
   where
-    go acc []                   = reverse acc : []
+    go acc []                   = [reverse acc]
     go acc ('\n' : '\n' : rest) = reverse acc : go [] rest
     go acc (x           : rest) = go (x : acc) rest
-
-traceShowId :: Show a => a -> a
-traceShowId a = trace (show a) a
