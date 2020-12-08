@@ -15,7 +15,9 @@ module Util
     , safeIndex
     , sumTrue
     , every
-    ) where
+    , findExactlyOne
+    )
+where
 
 import Data.Time.Clock.POSIX (getPOSIXTime)
 import Control.Monad.IO.Class (MonadIO(..))
@@ -39,7 +41,7 @@ runDay (Day act) = do
     act
 
 newtype Task (n :: Nat) a = Task (IO a)
-    deriving (Functor, Applicative, Monad) via IO
+    deriving (Functor, Applicative, Monad, MonadFail) via IO
 
 instance MonadIO (Task n) where
     liftIO = Task
@@ -77,3 +79,9 @@ every i' = every' i' i'
     every' _ _ []       = []
     every' i 0 (x : xs) = x : every' i i xs
     every' i n (_ : xs) = every' i (n - 1) xs
+
+findExactlyOne :: MonadFail m => (a -> Bool) -> [a] -> m a
+findExactlyOne f xs = case filter f xs of
+    [res] -> pure res
+    []    -> fail "No results"
+    _     -> fail "More than one result"
