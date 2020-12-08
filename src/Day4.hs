@@ -20,7 +20,7 @@ import Text.Megaparsec (Parsec, parse, sepBy, some, choice)
 import Text.Megaparsec.Char (char, eol, alphaNumChar, string)
 import Text.Read (readMaybe)
 
-import Util (SomeDay(..), Day, Task, runTask)
+import Util (SomeDay(..), Day, Task, runTask, splitOnDoubleNewline)
 
 data Passport m = Passport
     { birthYear      :: m String
@@ -187,10 +187,3 @@ tagP = choice
     ]
 
 type Parser = Parsec Void String
-
-splitOnDoubleNewline :: String -> [String]
-splitOnDoubleNewline = go []
-  where
-    go acc []                   = [reverse acc]
-    go acc ('\n' : '\n' : rest) = reverse acc : go [] rest
-    go acc (x           : rest) = go (x : acc) rest

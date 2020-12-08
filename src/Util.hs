@@ -16,6 +16,7 @@ module Util
     , sumTrue
     , every
     , findExactlyOne
+    , splitOnDoubleNewline
     )
 where
 
@@ -85,3 +86,10 @@ findExactlyOne f xs = case filter f xs of
     [res] -> pure res
     []    -> fail "No results"
     _     -> fail "More than one result"
+
+splitOnDoubleNewline :: String -> [String]
+splitOnDoubleNewline = go []
+  where
+    go acc []                   = [reverse acc]
+    go acc ('\n' : '\n' : rest) = reverse acc : go [] rest
+    go acc (x           : rest) = go (x : acc) rest
