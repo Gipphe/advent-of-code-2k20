@@ -17,12 +17,15 @@ module Util
     , every
     , findExactlyOne
     , splitOnDoubleNewline
+    , trim
     )
 where
 
-import Data.Time.Clock.POSIX (getPOSIXTime)
 import Control.Monad.IO.Class (MonadIO(..))
+import Data.Char (isSpace)
+import Data.List (dropWhileEnd)
 import Data.Proxy (Proxy(..))
+import Data.Time.Clock.POSIX (getPOSIXTime)
 import GHC.TypeLits (KnownNat, Nat, natVal)
 
 data SomeDay = forall n . KnownNat n => SomeDay (Day n ())
@@ -93,3 +96,6 @@ splitOnDoubleNewline = go []
     go acc []                   = [reverse acc]
     go acc ('\n' : '\n' : rest) = reverse acc : go [] rest
     go acc (x           : rest) = go (x : acc) rest
+
+trim :: String -> String
+trim = dropWhileEnd isSpace . dropWhile isSpace

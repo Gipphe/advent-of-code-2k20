@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 8fd3f8f5c1e571c2017d9f2a9f0bbdd3a0c3a34b82912e88fe21307dbd82c1ad
+-- hash: ba3afd32165fd1ed12b0927dbb0b65db89a27a6345439a835004dae97c1ba540
 
 name:           advent-of-code-2k20
 version:        0.1.0.0
@@ -33,6 +33,7 @@ library
       Day4
       Day5
       Day6
+      Day7
       Lib
       Util
   other-modules:
@@ -42,6 +43,7 @@ library
   ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wpartial-fields -Wredundant-constraints -flate-specialise -fspecialise-aggressively
   build-depends:
       base >=4.7 && <5
+    , file-embed
     , megaparsec
     , parser-combinators
     , time
@@ -57,6 +59,7 @@ executable advent-of-code-2k20-exe
   build-depends:
       advent-of-code-2k20
     , base >=4.7 && <5
+    , file-embed
     , megaparsec
     , parser-combinators
     , time
@@ -73,6 +76,7 @@ test-suite advent-of-code-2k20-test
   build-depends:
       advent-of-code-2k20
     , base >=4.7 && <5
+    , file-embed
     , megaparsec
     , parser-combinators
     , time

@@ -6,13 +6,12 @@ module Day5 where
 import Control.Applicative ((<|>))
 import Control.Monad.IO.Class (liftIO)
 import Data.Bifunctor (first)
-import Data.Char (isSpace)
-import Data.List (dropWhileEnd, sort)
+import Data.List (sort)
 import Data.Void (Void)
 import Text.Megaparsec (count, parse, sepBy, Parsec)
 import Text.Megaparsec.Char (char, eol)
 
-import Util (Day, SomeDay(..), Task, runTask, findExactlyOne)
+import Util (Day, SomeDay(..), Task, runTask, findExactlyOne, trim)
 
 someDay5 :: SomeDay
 someDay5 = SomeDay day5
@@ -24,9 +23,6 @@ day5 = do
 
 ioInput :: IO [Seat]
 ioInput = either fail pure . parseSeats . trim =<< readFile "input/day5.txt"
-
-trim :: String -> String
-trim = dropWhileEnd isSpace . dropWhile isSpace
 
 day5Task1 :: Task 1 Int
 day5Task1 = do

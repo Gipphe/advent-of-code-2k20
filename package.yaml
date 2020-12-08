@@ -20,6 +20,7 @@ description: Please see the README on GitHub at <https://github.com/gipphe/adven
 
 dependencies:
   - base >= 4.7 && < 5
+  - file-embed
   - megaparsec
   - parser-combinators
   - time
