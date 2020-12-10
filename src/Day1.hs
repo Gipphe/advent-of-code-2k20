@@ -8,7 +8,6 @@ module Day1 where
 import Data.FileEmbed (embedStringFile)
 import Data.List (find)
 
-
 import Util (Day, Task, SomeDay(..), runTask)
 
 parseInput :: String -> [Int]
