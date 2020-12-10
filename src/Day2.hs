@@ -1,17 +1,20 @@
 {-# LANGUAGE DataKinds #-}
+{-# LANGUAGE TemplateHaskell #-}
 {-# LANGUAGE NamedFieldPuns #-}
 {-# LANGUAGE ScopedTypeVariables #-}
 
 module Day2 where
 
-import Control.Monad.IO.Class (liftIO)
 import Data.Bifunctor (first)
+import Data.FileEmbed (embedStringFile)
 import Data.Void (Void)
 import Text.Megaparsec (parse, many, some, manyTill, label, Parsec)
 import Text.Megaparsec.Char (char, digitChar, space, letterChar, eol)
 import Text.Read (readMaybe)
+import Data.Vector (Vector, (!?))
+import qualified Data.Vector as Vec
 
-import Util (Day, Task, SomeDay(..), runTask, safeIndex, sumTrue)
+import Util (Day, Task, SomeDay(..), runTask)
 
 someDay2 :: SomeDay
 someDay2 = SomeDay day2
@@ -25,19 +28,29 @@ data Pw = Pw
     { pwFrom :: Int
     , pwTo   :: Int
     , pwChar :: Char
-    , pwPw   :: String
+    , pwPw   :: Vector Char
     }
 
-ioInput :: IO [Pw]
-ioInput = either fail pure . parsePws =<< readFile "input/day2.txt"
+parseInput :: String -> [Pw]
+parseInput = either error id . parsePws
+
+rawInput :: String
+rawInput = $(embedStringFile "input/day2.txt")
+
+parsedInput :: [Pw]
+parsedInput = parseInput rawInput
 
 day2Task1 :: Task 1 Int
-day2Task1 = do
-    sumTrue . fmap validatePw <$> liftIO ioInput
+day2Task1 = pure $ computeTask1 parsedInput
+
+computeTask1 :: [Pw] -> Int
+computeTask1 = length . filter id . fmap validatePw
 
 day2Task2 :: Task 2 Int
-day2Task2 = do
-    sumTrue . fmap validateWithRealPolicy <$> liftIO ioInput
+day2Task2 = pure $ computeTask2 parsedInput
+
+computeTask2 :: [Pw] -> Int
+computeTask2 = length . filter id . fmap validateWithRealPolicy
 
 validatePw :: Pw -> Bool
 validatePw Pw { pwFrom, pwTo, pwChar, pwPw } = isWithinLimits
@@ -48,8 +61,7 @@ validatePw Pw { pwFrom, pwTo, pwChar, pwPw } = isWithinLimits
 
 validateWithRealPolicy :: Pw -> Bool
 validateWithRealPolicy Pw { pwFrom, pwTo, pwChar, pwPw } =
-    (safeIndex (pwFrom - 1) pwPw == Just pwChar)
-        /= (safeIndex (pwTo - 1) pwPw == Just pwChar)
+    (pwPw !? (pwFrom - 1) == Just pwChar) /= (pwPw !? (pwTo - 1) == Just pwChar)
 
 parsePws :: String -> Either String [Pw]
 parsePws = first show . parse (many pwP) ""
@@ -63,7 +75,7 @@ pwP = do
     pwChar      <- label "pwChar" letterChar
     (_ :: Char) <- char ':'
     space
-    pwPw <- manyTill letterChar eol
+    pwPw <- Vec.fromList <$> manyTill letterChar eol
     pure $ Pw { pwFrom, pwTo, pwChar, pwPw }
   where
     readDigit :: String -> Parser Int

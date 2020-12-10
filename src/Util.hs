@@ -13,9 +13,6 @@ module Util
     , runDay
     , runTask
     , safeIndex
-    , sumTrue
-    , every
-    , findExactlyOne
     , splitOnDoubleNewline
     , trim
     )
@@ -28,32 +25,37 @@ import Data.Proxy (Proxy(..))
 import Data.Time.Clock.POSIX (getPOSIXTime)
 import GHC.TypeLits (KnownNat, Nat, natVal)
 
+
+---------------------------------------------
+-- * Nifty monads to automate console logging
+---------------------------------------------
+
 data SomeDay = forall n . KnownNat n => SomeDay (Day n ())
 
 runSomeDay :: SomeDay -> IO ()
 runSomeDay (SomeDay day) = runDay day
 
-newtype Day (n :: Nat) a = Day (IO a)
+newtype Day (n :: Nat) a = Day { runDay' :: IO a }
     deriving (Functor, Applicative, Monad) via IO
 
 instance MonadIO (Day n) where
     liftIO = Day
 
 runDay :: forall n a . KnownNat n => Day n a -> IO a
-runDay (Day act) = do
+runDay m = do
     putStrLn $ "Day " <> show (natVal (Proxy @n))
-    act
+    runDay' m
 
-newtype Task (n :: Nat) a = Task (IO a)
+newtype Task (n :: Nat) a = Task { runTask' :: IO a }
     deriving (Functor, Applicative, Monad, MonadFail) via IO
 
 instance MonadIO (Task n) where
     liftIO = Task
 
 runTask :: forall n m a . (KnownNat n, Show a) => Task n a -> Day m ()
-runTask (Task act) = do
+runTask task = do
     startTime <- liftIO getPOSIXTime
-    res       <- liftIO act
+    res       <- liftIO $ runTask' task
     endTime   <- liftIO getPOSIXTime
     liftIO
         $  putStrLn
@@ -67,28 +69,17 @@ runTask (Task act) = do
         <> show (endTime - startTime)
     where taskNum = show (natVal (Proxy @n))
 
+
+-----------------
+-- * Actual utils
+-----------------
+
 safeIndex :: Int -> [a] -> Maybe a
 safeIndex 0 (x : _) = Just x
 safeIndex _ []      = Nothing
 safeIndex i (_ : xs)
     | i > 0     = safeIndex (i - 1) xs
     | otherwise = Nothing
-
-sumTrue :: [Bool] -> Int
-sumTrue = foldr (\x -> if x then (+ 1) else id) 0
-
-every :: Int -> [a] -> [a]
-every i' = every' i' i'
-  where
-    every' _ _ []       = []
-    every' i 0 (x : xs) = x : every' i i xs
-    every' i n (_ : xs) = every' i (n - 1) xs
-
-findExactlyOne :: MonadFail m => (a -> Bool) -> [a] -> m a
-findExactlyOne f xs = case filter f xs of
-    [res] -> pure res
-    []    -> fail "No results"
-    _     -> fail "More than one result"
 
 splitOnDoubleNewline :: String -> [String]
 splitOnDoubleNewline = go []

@@ -1,3 +1,4 @@
+{-# LANGUAGE TemplateHaskell #-}
 {-# LANGUAGE LambdaCase #-}
 {-# LANGUAGE UndecidableInstances #-}
 {-# LANGUAGE StandaloneDeriving #-}
@@ -8,7 +9,7 @@ module Day4 where
 
 import Control.Applicative (Alternative, (<|>))
 import Control.Monad ((<=<))
-import Control.Monad.IO.Class (liftIO)
+import Data.FileEmbed (embedStringFile)
 import Data.Bifunctor (first)
 import Data.Char (isDigit)
 import Data.Functor (($>))
@@ -126,24 +127,31 @@ day4 = do
     runTask day4Task1
     runTask day4Task2
 
-ioInput :: IO [Passport Maybe]
-ioInput =
-    either fail pure
-        .   parsePassports
-        .   intercalate "\n"
-        .   fmap (unwords . lines)
-        .   splitOnDoubleNewline
-        =<< readFile "input/day4.txt"
+parseInput :: String -> [Passport Maybe]
+parseInput =
+    either error id
+        . parsePassports
+        . intercalate "\n"
+        . fmap (unwords . lines)
+        . splitOnDoubleNewline
+
+rawInput :: String
+rawInput = $(embedStringFile "input/day4.txt")
+
+parsedInput :: [Passport Maybe]
+parsedInput = parseInput rawInput
 
 day4Task1 :: Task 1 Int
-day4Task1 = do
-    input <- liftIO ioInput
-    pure $ length $ mapMaybe validatePassport input
+day4Task1 = pure $ computeTask1 parsedInput
+
+computeTask1 :: [Passport Maybe] -> Int
+computeTask1 = length . mapMaybe validatePassport
 
 day4Task2 :: Task 2 Int
-day4Task2 = do
-    input <- liftIO ioInput
-    pure $ length $ mapMaybe (validateHarder <=< validatePassport) input
+day4Task2 = pure $ computeTask2 parsedInput
+
+computeTask2 :: [Passport Maybe] -> Int
+computeTask2 = length . mapMaybe (validateHarder <=< validatePassport)
 
 parsePassports :: String -> Either String [Passport Maybe]
 parsePassports = first show . parse passportsP ""

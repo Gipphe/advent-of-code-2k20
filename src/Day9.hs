@@ -6,6 +6,7 @@ module Day9 where
 import Data.FileEmbed (embedStringFile)
 import qualified Data.Set as S
 import Data.Vector (Vector, (!?))
+import Data.Maybe (fromMaybe)
 import qualified Data.Vector as Vec
 import Text.Read (readMaybe)
 
@@ -19,29 +20,37 @@ day9 = do
     runTask day9Task1
     runTask day9Task2
 
-rawInput :: String
-rawInput = $(embedStringFile "input/day9.txt")
-
-mInput :: (MonadFail m) => m (Vector Int)
-mInput =
-    maybe (fail "Could not read all numbers") pure
+parseInput :: String -> Vector Int
+parseInput =
+    fromMaybe (error "Could not read all numbers")
         . traverse readMaybe
         . Vec.fromList
         . lines
-        $ rawInput
+
+rawInput :: String
+rawInput = $(embedStringFile "input/day9.txt")
+
+parsedInput :: Vector Int
+parsedInput = parseInput rawInput
 
 day9Task1 :: Task 1 Int
-day9Task1 = either fail pure . check lim (lim + 1) =<< mInput where lim = 25
+day9Task1 = pure $ computeTask1 parsedInput
+
+computeTask1 :: Vector Int -> Int
+computeTask1 = either error id . check lim (lim + 1) where lim = 25
 
 day9Task2 :: Task 2 Int
 day9Task2 = do
-    input  <- mInput
-    target <- either fail pure $ check lim (lim + 1) input
-    range  <-
-        maybe (fail "Found no such contiguous run of numbers") pure
+    pure $ computeTask2 parsedInput
+
+computeTask2 :: Vector Int -> Int
+computeTask2 input = maximum range + minimum range
+  where
+    lim    = 25
+    target = either error id $ check lim (lim + 1) input
+    range =
+        fromMaybe (error "Found no such contiguous run of numbers")
             $ checkContiguous target input
-    pure $ maximum range + minimum range
-    where lim = 25
 
 type Pointer = Int
 type PreviousNumbersLength = Int
@@ -63,7 +72,7 @@ check lim pp xs = do
             <*> previousValues
 
 checkContiguous :: Int -> Vector Int -> Maybe (Vector Int)
-checkContiguous target xs = go target 0 1 xs
+checkContiguous target = go target 0 1
   where
     go tgt start end xs
         | summed == tgt = Just currentSlice

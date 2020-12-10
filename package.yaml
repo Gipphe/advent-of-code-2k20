@@ -64,3 +64,6 @@ tests:
       - -with-rtsopts=-N
     dependencies:
       - advent-of-code-2k20
+      - tasty
+      - tasty-hunit
+      - tasty-discover

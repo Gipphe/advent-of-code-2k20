@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 4d1911a605162179d53e592995b0e376d3619bd509faf8ce7f9cb05f5ca1a935
+-- hash: 6654cdf2cce8e46e7e0abef788ce6ca12729b5421956de999983be102ff2399b
 
 name:           advent-of-code-2k20
 version:        0.1.0.0
@@ -77,6 +77,15 @@ test-suite advent-of-code-2k20-test
   type: exitcode-stdio-1.0
   main-is: Spec.hs
   other-modules:
+      Day1Spec
+      Day2Spec
+      Day3Spec
+      Day4Spec
+      Day5Spec
+      Day6Spec
+      Day7Spec
+      Day8Spec
+      Day9Spec
       Paths_advent_of_code_2k20
   hs-source-dirs:
       test
@@ -89,6 +98,9 @@ test-suite advent-of-code-2k20-test
     , file-embed
     , megaparsec
     , parser-combinators
+    , tasty
+    , tasty-discover
+    , tasty-hunit
     , time
     , vector
   default-language: Haskell2010

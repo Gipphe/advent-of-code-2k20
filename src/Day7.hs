@@ -1,3 +1,4 @@
+{-# LANGUAGE BangPatterns #-}
 {-# LANGUAGE TemplateHaskell #-}
 {-# LANGUAGE LambdaCase #-}
 {-# LANGUAGE DataKinds #-}
@@ -11,6 +12,8 @@ import Data.FileEmbed (embedStringFile)
 import Data.Functor (($>))
 import Data.List (find)
 import Data.Void (Void)
+import Data.Set (Set)
+import qualified Data.Set as S
 import Text.Megaparsec (parse, Parsec, some, sepBy, sepEndBy, optional)
 import Text.Megaparsec.Char (letterChar, digitChar, eol, char, string)
 import Text.Read (readMaybe)
@@ -25,44 +28,56 @@ day7 = do
     runTask day7Task1
     runTask day7Task2
 
-input :: [BagRule]
-input = either undefined id $ parseBagRules $(embedStringFile "input/day7.txt")
+parseInput :: String -> [BagRule]
+parseInput = either error id . parseBagRules
+
+rawInput :: String
+rawInput = $(embedStringFile "input/day7.txt")
+
+parsedInput :: [BagRule]
+parsedInput = parseInput rawInput
 
 day7Task1 :: Task 1 Int
-day7Task1 = pure $ length $ filter omitShinyGold $ filter
-    (canHaveShinyGoldBag input)
-    input
+day7Task1 = pure $ computeTask1 parsedInput
+
+computeTask1 :: [BagRule] -> Int
+computeTask1 input =
+    length . filter omitShinyGold . filter (canHaveShinyGoldBag input) $ input
+  where
+    omitShinyGold (BagRule b _) | b == shinyGoldBag = False
+    omitShinyGold _ = True
 
 day7Task2 :: Task 2 Int
-day7Task2 = maybe (fail "No shiny gold bag rule") (pure . sumBags input)
-    $ find ((== shinyGoldBag) . bagRuleBag) input
+day7Task2 = pure $ computeTask2 parsedInput
+
+computeTask2 :: [BagRule] -> Int
+computeTask2 input =
+    maybe (error "No shiny gold bag rule") (sumBags input)
+        $ find ((== shinyGoldBag) . bagRuleBag) input
 
 sumBags :: [BagRule] -> BagRule -> Int
-sumBags _ (BagRule _ []) = 0
-sumBags bagRules (BagRule _ bagQuantities) =
-    sum $ sumBagQuantity bagRules <$> bagQuantities
+sumBags !bagRules (BagRule _ bagQuantities)
+    | S.null bagQuantities = 0
+    | otherwise = sum $ sumBagQuantity bagRules <$> S.toList bagQuantities
 
 sumBagQuantity :: [BagRule] -> BagQuantity -> Int
-sumBagQuantity bagRules (BagQuantity n bag) =
+sumBagQuantity !bagRules (BagQuantity n bag) =
     maybe 0 ((n *) . (+ 1) . sumBags bagRules)
         $ find ((== bag) . bagRuleBag) bagRules
 
-omitShinyGold :: BagRule -> Bool
-omitShinyGold (BagRule b _) | b == shinyGoldBag = False
-omitShinyGold _ = True
-
 canHaveShinyGoldBag :: [BagRule] -> BagRule -> Bool
-canHaveShinyGoldBag bagRules = \case
+canHaveShinyGoldBag !bagRules = \case
     BagRule b _ | b == shinyGoldBag -> True
     BagRule _ bagQuantities ->
         let
-            bagsWithin     = bagQuantityBag <$> bagQuantities
-            bagRulesWithin = filter ((`elem` bagsWithin) . bagRuleBag) bagRules
+            bagsWithin = S.map bagQuantityBag bagQuantities
+            bagRulesWithin =
+                filter ((`S.member` bagsWithin) . bagRuleBag) bagRules
         in any (canHaveShinyGoldBag bagRules) bagRulesWithin
 
 data BagRule = BagRule
     { bagRuleBag :: Bag
-    , bagRuleQuantities :: [BagQuantity]
+    , bagRuleQuantities :: Set BagQuantity
     }
     deriving (Show)
 
@@ -70,16 +85,16 @@ data BagQuantity = BagQuantity
     { bagQuantityQuantity :: Int
     , bagQuantityBag :: Bag
     }
-    deriving (Show)
+    deriving (Eq, Ord, Show)
 
 data Bag = Bag Adjective Color
-    deriving (Eq, Show)
-
-shinyGoldBag :: Bag
-shinyGoldBag = Bag "shiny" "gold"
+    deriving (Eq, Ord, Show)
 
 type Adjective = String
 type Color = String
+
+shinyGoldBag :: Bag
+shinyGoldBag = Bag "shiny" "gold"
 
 parseBagRules :: String -> Either String [BagRule]
 parseBagRules = first show . parse bagRulesP ""
@@ -90,9 +105,10 @@ bagRulesP = sepEndBy bagRuleP eol
 bagRuleP :: Parser BagRule
 bagRuleP = BagRule <$> bagP <* string " contain " <*> bagQuantitiesP
 
-bagQuantitiesP :: Parser [BagQuantity]
+bagQuantitiesP :: Parser (Set BagQuantity)
 bagQuantitiesP =
-    ((string "no other bags" $> []) <|> sepBy bagQuantityP (string ", "))
+    fmap S.fromList
+        $  ((string "no other bags" $> []) <|> sepBy bagQuantityP (string ", "))
         <* char '.'
 
 bagQuantityP :: Parser BagQuantity

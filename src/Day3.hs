@@ -1,9 +1,10 @@
+{-# LANGUAGE TemplateHaskell #-}
 {-# LANGUAGE FlexibleContexts #-}
 {-# LANGUAGE DataKinds #-}
 
 module Day3 where
 
-import Control.Monad.IO.Class (liftIO)
+import Data.FileEmbed (embedStringFile)
 
 import Util (SomeDay(..), Day, runTask, Task)
 
@@ -15,16 +16,26 @@ day3 = do
     runTask day3Task1
     runTask day3Task2
 
-ioInput :: IO [String]
-ioInput = lines <$> readFile "input/day3.txt"
+parseInput :: String -> [String]
+parseInput = lines
+
+rawInput :: String
+rawInput = $(embedStringFile "input/day3.txt")
+
+parsedInput :: [String]
+parsedInput = parseInput rawInput
 
 day3Task1 :: Task 1 Int
-day3Task1 = countTrees task1Step <$> liftIO ioInput
+day3Task1 = pure $ computeTask1 parsedInput
+
+computeTask1 :: [String] -> Int
+computeTask1 = countTrees task1Step
 
 day3Task2 :: Task 2 Int
-day3Task2 = do
-    input <- liftIO ioInput
-    pure $ product $ (`countTrees` input) <$> steps
+day3Task2 = pure $ computeTask2 parsedInput
+
+computeTask2 :: [String] -> Int
+computeTask2 input = product $ (`countTrees` input) <$> steps
   where
     steps :: [Step]
     steps = [(1, 1), (3, 1), (5, 1), (7, 1), (1, 2)]

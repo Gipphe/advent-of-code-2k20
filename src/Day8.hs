@@ -6,9 +6,10 @@ module Day8 where
 
 import Data.Bifunctor (first)
 import Data.FileEmbed (embedStringFile)
-import Data.Function (fix)
 import Data.Maybe (mapMaybe)
 import Text.Read (readMaybe)
+import Data.Set (Set)
+import qualified Data.Set as S
 
 import Util (SomeDay(..), Day, Task, runTask, safeIndex)
 
@@ -21,26 +22,35 @@ day8 = do
     runTask day8Task2
 
 day8Task1 :: Task 1 Int
-day8Task1 = pure $ runProgram 0 [] 0 input
+day8Task1 = pure $ computeTask1 parsedInput
 
-day8Task2 :: Task 2 [Int]
-day8Task2 =
-    pure
+computeTask1 :: Program -> Int
+computeTask1 = runProgram 0 mempty 0
+
+day8Task2 :: Task 2 Int
+day8Task2 = pure $ computeTask2 parsedInput
+
+computeTask2 :: Program -> Int
+computeTask2 input =
+    head
         $ mapMaybe
-              ( runProgramUntilTermination 0 [] 0
-              . (\(i, input) -> mapAtIndex i toggleJmpNop input)
+              ( runProgramUntilTermination 0 mempty 0
+              . (\(i, program) -> mapAtIndex i toggleJmpNop program)
               )
         $ zip [0 ..]
         $ replicate (length input) input
 
+parseInput :: String -> Program
+parseInput = either (error "Couldn't parse input") id . parseProgram
+
 rawInput :: String
 rawInput = $(embedStringFile "input/day8.txt")
 
-input :: Program
-input = either (error "Couldn't parse input") id $ parseInput rawInput
+parsedInput :: Program
+parsedInput = parseInput rawInput
 
 type ProgramPointer = Int
-type Events = [ProgramPointer]
+type Events = Set ProgramPointer
 type Accumulator = Int
 
 type Program = [Instruction]
@@ -55,7 +65,7 @@ runProgram :: ProgramPointer -> Events -> Accumulator -> Program -> Int
 runProgram pp events acc p
     | loopDetected = acc
     | otherwise    = nextStep runProgram pp events acc p
-    where loopDetected = pp `elem` events
+    where loopDetected = pp `S.member` events
 
 mapAtIndex :: Int -> (a -> a) -> [a] -> [a]
 mapAtIndex targetIdx f xs = fmap snd $ go $ zip [0 ..] xs
@@ -75,7 +85,7 @@ runProgramUntilTermination pp events acc p
     | loopDetected = Nothing
     | otherwise    = nextStep runProgramUntilTermination pp events acc p
   where
-    loopDetected = pp `elem` events
+    loopDetected = pp `S.member` events
     atEnd        = pp == length p
 
 nextStep :: (ProgramPointer -> Events -> Accumulator -> Program -> a)
@@ -85,9 +95,9 @@ nextStep :: (ProgramPointer -> Events -> Accumulator -> Program -> a)
          -> Program
          -> a
 nextStep fn pp events acc p = case safeIndex pp p of
-    Just (Acc n) -> fn (pp + 1) (pp : events) (acc + n) p
-    Just (Jmp n) -> fn (pp + n) (pp : events) acc p
-    Just (Nop _) -> fn (pp + 1) (pp : events) acc p
+    Just (Acc n) -> fn (pp + 1) (S.insert pp events) (acc + n) p
+    Just (Jmp n) -> fn (pp + n) (S.insert pp events) acc p
+    Just (Nop _) -> fn (pp + 1) (S.insert pp events) acc p
     Nothing      -> error "ProgramPointer outside of program"
 
 toggleJmpNop :: Instruction -> Instruction
@@ -96,8 +106,8 @@ toggleJmpNop = \case
     Nop arg -> Jmp arg
     x       -> x
 
-parseInput :: String -> Either String Program
-parseInput = traverse parseInstruction . filter (/= "") . lines
+parseProgram :: String -> Either String Program
+parseProgram = traverse parseInstruction . filter (/= "") . lines
 
 parseInstruction :: String -> Either String Instruction
 parseInstruction x

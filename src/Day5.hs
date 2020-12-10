@@ -1,17 +1,19 @@
 {-# LANGUAGE DataKinds #-}
+{-# LANGUAGE TemplateHaskell #-}
 {-# LANGUAGE LambdaCase #-}
 
 module Day5 where
 
 import Control.Applicative ((<|>))
-import Control.Monad.IO.Class (liftIO)
 import Data.Bifunctor (first)
-import Data.List (sort)
+import Data.List (sort, find)
+import Data.Maybe (fromMaybe)
 import Data.Void (Void)
+import Data.FileEmbed (embedStringFile)
 import Text.Megaparsec (count, parse, sepBy, Parsec)
 import Text.Megaparsec.Char (char, eol)
 
-import Util (Day, SomeDay(..), Task, runTask, findExactlyOne, trim)
+import Util (Day, SomeDay(..), Task, runTask, trim)
 
 someDay5 :: SomeDay
 someDay5 = SomeDay day5
@@ -21,22 +23,28 @@ day5 = do
     runTask day5Task1
     runTask day5Task2
 
-ioInput :: IO [Seat]
-ioInput = either fail pure . parseSeats . trim =<< readFile "input/day5.txt"
+parseInput :: String -> [Seat]
+parseInput = either error id . parseSeats . trim
+
+rawInput :: String
+rawInput = $(embedStringFile "input/day5.txt")
+
+parsedInput :: [Seat]
+parsedInput = parseInput rawInput
 
 day5Task1 :: Task 1 Int
-day5Task1 = do
-    input <- liftIO ioInput
-    pure $ maximum $ getSeatID <$> input
+day5Task1 = pure $ computeTask1 parsedInput
+
+computeTask1 :: [Seat] -> Int
+computeTask1 = maximum . fmap getSeatID
 
 day5Task2 :: Task 2 Int
-day5Task2 = do
-    input <- liftIO ioInput
-    let seatIDs = sort $ getSeatID <$> input
-    maybe (fail "Could not find seat") pure
-        $ findExactlyOne
-              (`notElem` seatIDs)
-              [minimum seatIDs .. maximum seatIDs]
+day5Task2 = pure $ computeTask2 parsedInput
+
+computeTask2 :: [Seat] -> Int
+computeTask2 input = fromMaybe (error "Could not find seat")
+    $ find (`notElem` seatIDs) [minimum seatIDs .. maximum seatIDs]
+    where seatIDs = sort $ getSeatID <$> input
 
 findAxis :: String -> Int
 findAxis = \case
