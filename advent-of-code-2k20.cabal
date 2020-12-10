@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: f675fbf0c46a2d4df016b8300919af8240ad72a2ad09faf5e16e5e9d7c0a381a
+-- hash: 90877065192e7f325f83dbf4596d7766cdb26355f363050a1349ba6694f95021
 
 name:           advent-of-code-2k20
 version:        0.1.0.0
@@ -46,8 +46,8 @@ library
   build-depends:
       base >=4.7 && <5
     , containers
-    , either
     , file-embed
+    , hashable
     , megaparsec
     , parser-combinators
     , time
@@ -65,8 +65,8 @@ executable advent-of-code-2k20-exe
       advent-of-code-2k20
     , base >=4.7 && <5
     , containers
-    , either
     , file-embed
+    , hashable
     , megaparsec
     , parser-combinators
     , time
@@ -94,8 +94,8 @@ test-suite advent-of-code-2k20-test
       advent-of-code-2k20
     , base >=4.7 && <5
     , containers
-    , either
     , file-embed
+    , hashable
     , megaparsec
     , parser-combinators
     , tasty
@@ -117,8 +117,8 @@ benchmark advent-of-code-2k20-profile
       advent-of-code-2k20
     , base >=4.7 && <5
     , containers
-    , either
     , file-embed
+    , hashable
     , megaparsec
     , parser-combinators
     , time

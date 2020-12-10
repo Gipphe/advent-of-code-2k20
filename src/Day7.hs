@@ -10,8 +10,10 @@ import Control.Applicative ((<|>))
 import Data.Bifunctor (first)
 import Data.FileEmbed (embedStringFile)
 import Data.Functor (($>))
-import Data.List (find)
+import Data.Map.Strict (Map)
+import qualified Data.Map.Strict as M
 import Data.Void (Void)
+import Data.Hashable (hash)
 import Data.Set (Set)
 import qualified Data.Set as S
 import Text.Megaparsec (parse, Parsec, some, sepBy, sepEndBy, optional)
@@ -28,58 +30,58 @@ day7 = do
     runTask day7Task1
     runTask day7Task2
 
-parseInput :: String -> [BagRule]
+parseInput :: String -> BagRules
 parseInput = either error id . parseBagRules
 
 rawInput :: String
 rawInput = $(embedStringFile "input/day7.txt")
 
-parsedInput :: [BagRule]
+parsedInput :: BagRules
 parsedInput = parseInput rawInput
 
 day7Task1 :: Task 1 Int
 day7Task1 = pure $ computeTask1 parsedInput
 
-computeTask1 :: [BagRule] -> Int
+computeTask1 :: BagRules -> Int
 computeTask1 input =
-    length . filter omitShinyGold . filter (canHaveShinyGoldBag input) $ input
+    length
+        . filter omitShinyGold
+        . filter (canHaveShinyGoldBag input)
+        . M.toList
+        $ input
   where
-    omitShinyGold (BagRule b _) | b == shinyGoldBag = False
-    omitShinyGold _ = True
+    omitShinyGold (!b, _) | b == shinyGoldBag = False
+    omitShinyGold _                           = True
 
 day7Task2 :: Task 2 Int
 day7Task2 = pure $ computeTask2 parsedInput
 
-computeTask2 :: [BagRule] -> Int
+computeTask2 :: BagRules -> Int
 computeTask2 input =
     maybe (error "No shiny gold bag rule") (sumBags input)
-        $ find ((== shinyGoldBag) . bagRuleBag) input
+        $ M.lookup shinyGoldBag input
 
-sumBags :: [BagRule] -> BagRule -> Int
-sumBags !bagRules (BagRule _ bagQuantities)
+sumBags :: BagRules -> Set BagQuantity -> Int
+sumBags bagRules bagQuantities
     | S.null bagQuantities = 0
     | otherwise = sum $ sumBagQuantity bagRules <$> S.toList bagQuantities
 
-sumBagQuantity :: [BagRule] -> BagQuantity -> Int
-sumBagQuantity !bagRules (BagQuantity n bag) =
-    maybe 0 ((n *) . (+ 1) . sumBags bagRules)
-        $ find ((== bag) . bagRuleBag) bagRules
+sumBagQuantity :: BagRules -> BagQuantity -> Int
+sumBagQuantity bagRules (BagQuantity !n !bag) =
+    maybe 0 ((n *) . (+ 1) . sumBags bagRules) $ M.lookup bag bagRules
 
-canHaveShinyGoldBag :: [BagRule] -> BagRule -> Bool
-canHaveShinyGoldBag !bagRules = \case
-    BagRule b _ | b == shinyGoldBag -> True
-    BagRule _ bagQuantities ->
+canHaveShinyGoldBag :: BagRules -> BagRule -> Bool
+canHaveShinyGoldBag bagRules = \case
+    (b, _) | b == shinyGoldBag -> True
+    (_, bagQuantities) ->
         let
-            bagsWithin = S.map bagQuantityBag bagQuantities
-            bagRulesWithin =
-                filter ((`S.member` bagsWithin) . bagRuleBag) bagRules
-        in any (canHaveShinyGoldBag bagRules) bagRulesWithin
+            bagsWithin     = S.map bagQuantityBag bagQuantities
+            bagRulesWithin = M.restrictKeys bagRules bagsWithin
+        in any (canHaveShinyGoldBag bagRules) $ M.toList bagRulesWithin
 
-data BagRule = BagRule
-    { bagRuleBag :: Bag
-    , bagRuleQuantities :: Set BagQuantity
-    }
-    deriving (Show)
+type BagRules = Map Bag (Set BagQuantity)
+
+type BagRule = (Bag, Set BagQuantity)
 
 data BagQuantity = BagQuantity
     { bagQuantityQuantity :: Int
@@ -90,20 +92,20 @@ data BagQuantity = BagQuantity
 data Bag = Bag Adjective Color
     deriving (Eq, Ord, Show)
 
-type Adjective = String
-type Color = String
+type Adjective = Int
+type Color = Int
 
 shinyGoldBag :: Bag
-shinyGoldBag = Bag "shiny" "gold"
+shinyGoldBag = Bag (hash "shiny") (hash "gold")
 
-parseBagRules :: String -> Either String [BagRule]
+parseBagRules :: String -> Either String BagRules
 parseBagRules = first show . parse bagRulesP ""
 
-bagRulesP :: Parser [BagRule]
-bagRulesP = sepEndBy bagRuleP eol
+bagRulesP :: Parser BagRules
+bagRulesP = M.fromList <$> sepEndBy bagRuleP eol
 
 bagRuleP :: Parser BagRule
-bagRuleP = BagRule <$> bagP <* string " contain " <*> bagQuantitiesP
+bagRuleP = (,) <$> bagP <* string " contain " <*> bagQuantitiesP
 
 bagQuantitiesP :: Parser (Set BagQuantity)
 bagQuantitiesP =
@@ -126,9 +128,9 @@ bagP = Bag <$> adjectiveP <* char ' ' <*> colorP <* string " bag" <* optional
     (char 's')
 
 adjectiveP :: Parser Adjective
-adjectiveP = some letterChar
+adjectiveP = hash <$> some letterChar
 
 colorP :: Parser Color
-colorP = some letterChar
+colorP = hash <$> some letterChar
 
 type Parser = Parsec Void String

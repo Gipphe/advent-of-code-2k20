@@ -12,7 +12,6 @@ module Util
     , runSomeDay
     , runDay
     , runTask
-    , safeIndex
     , splitOnDoubleNewline
     , trim
     )
@@ -73,13 +72,6 @@ runTask task = do
 -----------------
 -- * Actual utils
 -----------------
-
-safeIndex :: Int -> [a] -> Maybe a
-safeIndex 0 (x : _) = Just x
-safeIndex _ []      = Nothing
-safeIndex i (_ : xs)
-    | i > 0     = safeIndex (i - 1) xs
-    | otherwise = Nothing
 
 splitOnDoubleNewline :: String -> [String]
 splitOnDoubleNewline = go []
