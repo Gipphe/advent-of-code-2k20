@@ -1,3 +1,4 @@
 .stack-work/
 *~
 advent-of-code-2k20-profile*
+input/day*.example.txt
