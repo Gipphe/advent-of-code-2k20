@@ -2,6 +2,7 @@ module Lib
     ( main
     ) where
 
+import Data.Time.Clock.POSIX (getPOSIXTime)
 import Data.List (intersperse)
 
 import Day1
@@ -39,4 +40,13 @@ days =
     ]
 
 main :: IO ()
-main = sequence_ $ intersperse (putStrLn "---------") $ runSomeDay <$> days
+main = do
+    startTime <- getPOSIXTime
+    sequence_ $ intersperse (putStrLn sep) $ runSomeDay <$> days
+    endTime <- getPOSIXTime
+    putStrLn
+        $  sep
+        <> "\nTook "
+        <> show (endTime - startTime)
+        <> " to run all days"
+    where sep = "---------"
