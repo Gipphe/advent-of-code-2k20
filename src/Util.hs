@@ -1,5 +1,6 @@
 {-# LANGUAGE DataKinds #-}
 {-# LANGUAGE DerivingVia #-}
+{-# LANGUAGE BangPatterns #-}
 {-# LANGUAGE KindSignatures #-}
 {-# LANGUAGE ScopedTypeVariables #-}
 {-# LANGUAGE TypeApplications #-}
@@ -14,9 +15,10 @@ module Util
     , runTask
     , splitOnDoubleNewline
     , trim
-    )
-where
+    ) where
 
+import Control.DeepSeq (NFData, force)
+import Control.Exception (evaluate)
 import Control.Monad.IO.Class (MonadIO(..))
 import Data.Char (isSpace)
 import Data.List (dropWhileEnd)
@@ -51,10 +53,13 @@ newtype Task (n :: Nat) a = Task { runTask' :: IO a }
 instance MonadIO (Task n) where
     liftIO = Task
 
-runTask :: forall n m a . (KnownNat n, Show a) => Task n a -> Day m ()
+runTask :: forall n m a
+         . (KnownNat n, Show a, NFData a)
+        => Task n a
+        -> Day m ()
 runTask task = do
     startTime <- liftIO getPOSIXTime
-    res       <- liftIO $ runTask' task
+    !res      <- liftIO $ evaluate . force =<< runTask' task
     endTime   <- liftIO getPOSIXTime
     liftIO
         $  putStrLn
