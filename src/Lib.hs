@@ -19,6 +19,7 @@ import Day11
 import Day12
 import Day13
 import Day14
+import Day15
 import Util
 
 days :: [SomeDay]
@@ -37,6 +38,7 @@ days =
     , someDay12
     , someDay13
     , someDay14
+    , someDay15
     ]
 
 main :: IO ()

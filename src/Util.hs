@@ -15,6 +15,7 @@ module Util
     , runTask
     , splitOnDoubleNewline
     , trim
+    , split
     ) where
 
 import Control.DeepSeq (NFData, force)
@@ -87,3 +88,14 @@ splitOnDoubleNewline = go []
 
 trim :: String -> String
 trim = dropWhileEnd isSpace . dropWhile isSpace
+
+split :: Char -> String -> [String]
+split _ "" = []
+split c s  = cons $ case break (== c) s of
+    (l, s') ->
+        ( l
+        , case s' of
+            []      -> []
+            _ : s'' -> split c s''
+        )
+    where cons ~(h, t) = h : t

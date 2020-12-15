@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: a16ae48dcfe4a6836b7b4cc99235c762e414944daca5555956807691240e8d22
+-- hash: 2c1bb819ce03a243595425fc56d8900da2546e571012c0fb8796321dacb45b1f
 
 name:           advent-of-code-2k20
 version:        0.1.0.0
@@ -33,6 +33,7 @@ library
       Day12
       Day13
       Day14
+      Day15
       Day2
       Day3
       Day4
@@ -89,6 +90,7 @@ test-suite advent-of-code-2k20-test
       Day12Spec
       Day13Spec
       Day14Spec
+      Day15Spec
       Day1Spec
       Day2Spec
       Day3Spec

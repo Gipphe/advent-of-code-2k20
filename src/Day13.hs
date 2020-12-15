@@ -10,7 +10,7 @@ import Data.Foldable (foldl')
 import Data.Maybe (catMaybes, mapMaybe, fromJust)
 import Data.List (sortOn, find)
 
-import Util (SomeDay(..), Day, Task, runTask)
+import Util (SomeDay(..), Day, Task, runTask, split)
 
 someDay13 :: SomeDay
 someDay13 = SomeDay day13
@@ -81,14 +81,3 @@ readTime :: String -> Maybe Int
 readTime = \case
     "x" -> Nothing
     t   -> Just (read t)
-
-split :: Char -> String -> [String]
-split _ "" = []
-split c s  = cons $ case break (== c) s of
-    (l, s') ->
-        ( l
-        , case s' of
-            []      -> []
-            _ : s'' -> split c s''
-        )
-    where cons ~(h, t) = h : t
