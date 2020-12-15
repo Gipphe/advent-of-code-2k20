@@ -36,6 +36,9 @@ ghc-options:
   - -Widentities
   - -Wincomplete-record-updates
   - -Wincomplete-uni-patterns
+  - -Wunused-binds
+  - -Wunused-imports
+  - -Wunused-foralls
   - -Wpartial-fields
   - -Wredundant-constraints
   - -flate-specialise

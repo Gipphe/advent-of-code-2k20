@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 2c1bb819ce03a243595425fc56d8900da2546e571012c0fb8796321dacb45b1f
+-- hash: 18afacc3f24e9d2f1dda2603e8c1848259687cf3e34566290033a6345334f8bc
 
 name:           advent-of-code-2k20
 version:        0.1.0.0
@@ -48,7 +48,7 @@ library
       Paths_advent_of_code_2k20
   hs-source-dirs:
       src
-  ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wpartial-fields -Wredundant-constraints -flate-specialise -fspecialise-aggressively
+  ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wunused-binds -Wunused-imports -Wunused-foralls -Wpartial-fields -Wredundant-constraints -flate-specialise -fspecialise-aggressively
   build-depends:
       base >=4.7 && <5
     , containers
@@ -67,7 +67,7 @@ executable advent-of-code-2k20-exe
       Paths_advent_of_code_2k20
   hs-source-dirs:
       app
-  ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wpartial-fields -Wredundant-constraints -flate-specialise -fspecialise-aggressively -threaded -rtsopts -with-rtsopts=-N
+  ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wunused-binds -Wunused-imports -Wunused-foralls -Wpartial-fields -Wredundant-constraints -flate-specialise -fspecialise-aggressively -threaded -rtsopts -with-rtsopts=-N
   build-depends:
       advent-of-code-2k20
     , base >=4.7 && <5
@@ -103,7 +103,7 @@ test-suite advent-of-code-2k20-test
       Paths_advent_of_code_2k20
   hs-source-dirs:
       test
-  ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wpartial-fields -Wredundant-constraints -flate-specialise -fspecialise-aggressively -threaded -rtsopts -with-rtsopts=-N
+  ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wunused-binds -Wunused-imports -Wunused-foralls -Wpartial-fields -Wredundant-constraints -flate-specialise -fspecialise-aggressively -threaded -rtsopts -with-rtsopts=-N
   build-depends:
       advent-of-code-2k20
     , base >=4.7 && <5
@@ -127,7 +127,7 @@ benchmark advent-of-code-2k20-profile
       Paths_advent_of_code_2k20
   hs-source-dirs:
       profile
-  ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wpartial-fields -Wredundant-constraints -flate-specialise -fspecialise-aggressively -threaded -rtsopts -with-rtsopts=-N
+  ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wunused-binds -Wunused-imports -Wunused-foralls -Wpartial-fields -Wredundant-constraints -flate-specialise -fspecialise-aggressively -threaded -rtsopts -with-rtsopts=-N
   build-depends:
       advent-of-code-2k20
     , base >=4.7 && <5
