@@ -18,6 +18,7 @@ module Util
     , runTask
     , splitOnDoubleNewline
     , trim
+    , toSnd
     , split
     ) where
 
@@ -104,3 +105,6 @@ split c s  = cons $ case break (== c) s of
             _ : s'' -> split c s''
         )
     where cons ~(h, t) = h : t
+
+toSnd :: (a -> b) -> a -> (a, b)
+toSnd f a = (a, f a)
