@@ -7,21 +7,21 @@
 
 module Day4 where
 
-import Control.Applicative (Alternative, (<|>))
+import Control.Applicative ((<|>), Alternative)
 import Control.Monad ((<=<))
-import Data.FileEmbed (embedStringFile)
 import Data.Bifunctor (first)
 import Data.Char (isDigit)
+import Data.FileEmbed (embedStringFile)
 import Data.Functor (($>))
 import Data.Functor.Identity (Identity(..))
 import Data.List (intercalate)
 import Data.Maybe (mapMaybe)
 import Data.Void (Void)
-import Text.Megaparsec (Parsec, parse, sepBy, some, choice)
-import Text.Megaparsec.Char (char, eol, alphaNumChar, string)
+import Text.Megaparsec (Parsec, choice, parse, sepBy, some)
+import Text.Megaparsec.Char (alphaNumChar, char, eol, string)
 import Text.Read (readMaybe)
 
-import Util (SomeDay(..), Day, Task, runTask, splitOnDoubleNewline)
+import Util (Day, SomeDay(..), Task, runTask, splitOnDoubleNewline)
 
 data Passport m = Passport
     { birthYear      :: m String

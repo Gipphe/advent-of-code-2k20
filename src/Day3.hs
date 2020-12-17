@@ -6,7 +6,7 @@ module Day3 where
 
 import Data.FileEmbed (embedStringFile)
 
-import Util (SomeDay(..), Day, runTask, Task)
+import Util (Day, SomeDay(..), Task, runTask)
 
 someDay3 :: SomeDay
 someDay3 = SomeDay day3

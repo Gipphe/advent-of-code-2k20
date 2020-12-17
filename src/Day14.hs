@@ -6,20 +6,20 @@
 module Day14 where
 
 import Control.Applicative ((<|>))
-import Data.FileEmbed (embedStringFile)
-import Data.Void (Void)
-import Data.Char (digitToInt)
 import Data.Bifunctor (first)
-import Data.Bits ((.&.), (.|.), setBit, clearBit)
+import Data.Bits ((.&.), (.|.), clearBit, setBit)
+import Data.Char (digitToInt)
+import Data.FileEmbed (embedStringFile)
 import Data.Functor (($>))
 import Data.IntMap.Strict (insert)
+import Data.List (foldl')
 import Data.Set (Set)
 import qualified Data.Set as S
-import Data.List (foldl')
-import Text.Megaparsec (Parsec, errorBundlePretty, parse, count, some, sepEndBy)
-import Text.Megaparsec.Char (char, string, digitChar, eol)
+import Data.Void (Void)
+import Text.Megaparsec (Parsec, count, errorBundlePretty, parse, sepEndBy, some)
+import Text.Megaparsec.Char (char, digitChar, eol, string)
 
-import Util (SomeDay(..), Day, Task, runTask)
+import Util (Day, SomeDay(..), Task, runTask)
 
 someDay14 :: SomeDay
 someDay14 = SomeDay day14
@@ -73,8 +73,7 @@ computeTask2 _ = error "Missing first bitmask"
 
 maskToAddrs :: BitMask -> Int -> Set Int
 maskToAddrs mask addr = fanOutMask 35 mask $ addr .|. oneMask
-  where
-    oneMask  = toDec $ maybeOne <$> mask
+    where oneMask = toDec $ maybeOne <$> mask
 
 fanOutMask :: Int -> BitMask -> Int -> Set Int
 fanOutMask _ [] n = S.singleton n

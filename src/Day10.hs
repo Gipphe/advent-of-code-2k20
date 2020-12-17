@@ -7,10 +7,10 @@
 module Day10 where
 
 import Data.FileEmbed (embedStringFile)
-import Data.Sequence (Seq(..), (<|))
+import Data.Sequence ((<|), Seq(..))
 import qualified Data.Sequence as Seq
 
-import Util (SomeDay(..), Day, Task, runTask)
+import Util (Day, SomeDay(..), Task, runTask)
 
 someDay10 :: SomeDay
 someDay10 = SomeDay day10

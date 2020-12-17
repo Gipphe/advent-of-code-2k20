@@ -6,14 +6,14 @@ module Day8 where
 
 import Data.Bifunctor (first)
 import Data.FileEmbed (embedStringFile)
-import Data.Vector (Vector, (!?))
-import qualified Data.Vector as Vec
 import Data.Maybe (mapMaybe)
-import Text.Read (readMaybe)
 import Data.Set (Set)
 import qualified Data.Set as S
+import Data.Vector ((!?), Vector)
+import qualified Data.Vector as Vec
+import Text.Read (readMaybe)
 
-import Util (SomeDay(..), Day, Task, runTask)
+import Util (Day, SomeDay(..), Task, runTask)
 
 someDay8 :: SomeDay
 someDay8 = SomeDay day8

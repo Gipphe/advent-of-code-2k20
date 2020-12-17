@@ -8,7 +8,7 @@ module Day1 where
 import Data.FileEmbed (embedStringFile)
 import Data.List (find)
 
-import Util (Day, Task, SomeDay(..), runTask)
+import Util (Day, SomeDay(..), Task, runTask)
 
 parseInput :: String -> [Int]
 parseInput = fmap read . lines

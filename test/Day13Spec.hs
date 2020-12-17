@@ -1,7 +1,7 @@
 module Day13Spec where
 
-import Test.Tasty.HUnit
 import Day13
+import Test.Tasty.HUnit
 
 unit_Day13_computeTask1 :: Assertion
 unit_Day13_computeTask1 = computeTask1 parsedInput @?= 2298

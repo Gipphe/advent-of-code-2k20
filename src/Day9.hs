@@ -4,13 +4,13 @@
 module Day9 where
 
 import Data.FileEmbed (embedStringFile)
-import qualified Data.Set as S
-import Data.Vector (Vector, (!?))
 import Data.Maybe (fromMaybe)
+import qualified Data.Set as S
+import Data.Vector ((!?), Vector)
 import qualified Data.Vector as Vec
 import Text.Read (readMaybe)
 
-import Util (SomeDay(..), Day, Task, runTask)
+import Util (Day, SomeDay(..), Task, runTask)
 
 someDay9 :: SomeDay
 someDay9 = SomeDay day9

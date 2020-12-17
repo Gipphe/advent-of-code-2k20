@@ -16,7 +16,7 @@ import qualified Data.Sequence as Seq
 import Data.Vector.Unboxed.Mutable (MVector)
 import qualified Data.Vector.Unboxed.Mutable as V
 
-import Util (SomeDay(..), Day, Task, runTask, split)
+import Util (Day, SomeDay(..), Task, runTask, split)
 
 
 ----------------
@@ -63,10 +63,11 @@ stepV vector num counter = do
 
 -- | Previous solution
 compute :: Int -> [Int] -> Int
-compute _     []  = error "No numbers"
-compute limit xs' = step limit startTurn x' $ M.fromList $ fmap (fmap pure) $ zip
-    xs'
-    [1 .. length xs']
+compute _ [] = error "No numbers"
+compute limit xs' =
+    step limit startTurn x' $ M.fromList $ fmap (fmap pure) $ zip
+        xs'
+        [1 .. length xs']
   where
     startTurn = length xs' + 1
     x'        = last xs'

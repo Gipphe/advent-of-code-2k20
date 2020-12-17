@@ -10,17 +10,17 @@ import Control.Applicative ((<|>))
 import Data.Bifunctor (first)
 import Data.FileEmbed (embedStringFile)
 import Data.Functor (($>))
+import Data.Hashable (hash)
 import Data.Map.Strict (Map)
 import qualified Data.Map.Strict as M
-import Data.Void (Void)
-import Data.Hashable (hash)
 import Data.Set (Set)
 import qualified Data.Set as S
-import Text.Megaparsec (parse, Parsec, some, sepBy, sepEndBy, optional)
-import Text.Megaparsec.Char (letterChar, digitChar, eol, char, string)
+import Data.Void (Void)
+import Text.Megaparsec (Parsec, optional, parse, sepBy, sepEndBy, some)
+import Text.Megaparsec.Char (char, digitChar, eol, letterChar, string)
 import Text.Read (readMaybe)
 
-import Util (SomeDay(..), Day, Task, runTask)
+import Util (Day, SomeDay(..), Task, runTask)
 
 someDay7 :: SomeDay
 someDay7 = SomeDay day7
@@ -85,7 +85,7 @@ type BagRule = (Bag, Set BagQuantity)
 
 data BagQuantity = BagQuantity
     { bagQuantityQuantity :: Int
-    , bagQuantityBag :: Bag
+    , bagQuantityBag      :: Bag
     }
     deriving (Eq, Ord, Show)
 

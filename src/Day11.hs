@@ -4,20 +4,20 @@
 
 module Day11 where
 
-import Debug.Trace (trace)
 import Control.Applicative ((<|>))
 import Control.Monad (join)
 import Data.Bifunctor (first)
 import Data.FileEmbed (embedStringFile)
-import Data.Maybe (fromMaybe, mapMaybe)
 import Data.Functor (($>))
-import Data.Void (Void)
-import Data.Vector (Vector, (!?))
+import Data.Maybe (fromMaybe, mapMaybe)
+import Data.Vector ((!?), Vector)
 import qualified Data.Vector as Vec
-import Text.Megaparsec (Parsec, some, parse, sepEndBy)
+import Data.Void (Void)
+import Debug.Trace (trace)
+import Text.Megaparsec (Parsec, parse, sepEndBy, some)
 import Text.Megaparsec.Char (char, eol)
 
-import Util (SomeDay(..), Day, Task, runTask)
+import Util (Day, SomeDay(..), Task, runTask)
 
 someDay11 :: SomeDay
 someDay11 = SomeDay day11
@@ -49,7 +49,7 @@ iterateNeighbor :: Int -> Int -> Vector (Vector Seat) -> Seat -> Seat
 iterateNeighbor x y xs = \case
     EmptySeat | occupiedSeats == 0 -> OccupiedSeat
     OccupiedSeat | occupiedSeats >= 4 -> EmptySeat
-    s -> s
+    s                              -> s
   where
     adjacent =
         [ (x', y')
@@ -60,7 +60,7 @@ iterateNeighbor x y xs = \case
         , y' >= 0 && y' < Vec.length xs
         ]
     occupiedSeats = sumOccupiedSeat neighbors
-    neighbors       = uncurry lookupNeighbor <$> adjacent
+    neighbors     = uncurry lookupNeighbor <$> adjacent
     lookupNeighbor x'' y'' = fromMaybe NoSeat $ (!? x'') =<< xs !? y''
 
 day11Task2 :: Task 2 Int
@@ -76,10 +76,9 @@ iterateDistantNeighbor :: Int -> Int -> Vector (Vector Seat) -> Seat -> Seat
 iterateDistantNeighbor x y xs = \case
     EmptySeat | occupiedSeats == 0 -> OccupiedSeat
     OccupiedSeat | occupiedSeats >= 5 -> EmptySeat
-    s -> s
+    s                              -> s
   where
-    occupiedSeats =
-        sumOccupiedSeat firstSeatInEachDirection
+    occupiedSeats            = sumOccupiedSeat firstSeatInEachDirection
     firstSeatInEachDirection = mapMaybe firstActualSeat seatsInEachDirection
     seatsInEachDirection =
         (\(stepX, stepY) -> diagonalSeats stepX stepY x y xs) <$> vectors

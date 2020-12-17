@@ -6,11 +6,11 @@ module Day5 where
 
 import Control.Applicative ((<|>))
 import Data.Bifunctor (first)
-import Data.List (sort, find)
+import Data.FileEmbed (embedStringFile)
+import Data.List (find, sort)
 import Data.Maybe (fromMaybe)
 import Data.Void (Void)
-import Data.FileEmbed (embedStringFile)
-import Text.Megaparsec (count, parse, sepBy, Parsec)
+import Text.Megaparsec (Parsec, count, parse, sepBy)
 import Text.Megaparsec.Char (char, eol)
 
 import Util (Day, SomeDay(..), Task, runTask, trim)
@@ -71,8 +71,8 @@ getSeatID (Seat _ (Row row) (Column column)) = row * 8 + column
 
 data Seat = Seat
     { seatDesignation :: String
-    , seatRow :: Row
-    , seatColumn :: Column
+    , seatRow         :: Row
+    , seatColumn      :: Column
     }
 
 newtype Row = Row { getRow :: Int }

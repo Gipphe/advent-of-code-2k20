@@ -4,10 +4,10 @@
 
 module Day12 where
 
-import Data.Foldable (foldl')
 import Data.FileEmbed (embedStringFile)
+import Data.Foldable (foldl')
 
-import Util (SomeDay(..), Day, Task, runTask)
+import Util (Day, SomeDay(..), Task, runTask)
 
 someDay12 :: SomeDay
 someDay12 = SomeDay day12

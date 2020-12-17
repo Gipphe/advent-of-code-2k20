@@ -3,8 +3,8 @@
 
 module Day6 where
 
-import Data.List (nub, sort, group)
 import Data.FileEmbed (embedStringFile)
+import Data.List (group, nub, sort)
 
 import Util (Day, SomeDay(..), Task, runTask, splitOnDoubleNewline)
 

@@ -7,10 +7,10 @@ module Day13 where
 
 import Data.FileEmbed (embedStringFile)
 import Data.Foldable (foldl')
-import Data.Maybe (catMaybes, mapMaybe, fromJust)
-import Data.List (sortOn, find)
+import Data.List (find, sortOn)
+import Data.Maybe (catMaybes, fromJust, mapMaybe)
 
-import Util (SomeDay(..), Day, Task, runTask, split)
+import Util (Day, SomeDay(..), Task, runTask, split)
 
 someDay13 :: SomeDay
 someDay13 = SomeDay day13

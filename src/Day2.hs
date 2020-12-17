@@ -7,14 +7,14 @@ module Day2 where
 
 import Data.Bifunctor (first)
 import Data.FileEmbed (embedStringFile)
-import Data.Void (Void)
-import Text.Megaparsec (parse, many, some, manyTill, label, Parsec)
-import Text.Megaparsec.Char (char, digitChar, space, letterChar, eol)
-import Text.Read (readMaybe)
-import Data.Vector (Vector, (!?))
+import Data.Vector ((!?), Vector)
 import qualified Data.Vector as Vec
+import Data.Void (Void)
+import Text.Megaparsec (Parsec, label, many, manyTill, parse, some)
+import Text.Megaparsec.Char (char, digitChar, eol, letterChar, space)
+import Text.Read (readMaybe)
 
-import Util (Day, Task, SomeDay(..), runTask)
+import Util (Day, SomeDay(..), Task, runTask)
 
 someDay2 :: SomeDay
 someDay2 = SomeDay day2
