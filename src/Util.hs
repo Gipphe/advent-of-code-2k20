@@ -20,6 +20,8 @@ module Util
     , trim
     , toSnd
     , split
+    , uncurry3
+    , uncurry4
     ) where
 
 import Control.DeepSeq (NFData, force)
@@ -108,3 +110,9 @@ split c s  = cons $ case break (== c) s of
 
 toSnd :: (a -> b) -> a -> (a, b)
 toSnd f a = (a, f a)
+
+uncurry3 :: (a -> b -> c -> d) -> (a, b, c) -> d
+uncurry3 f (a, b, c) = f a b c
+
+uncurry4 :: (a -> b -> c -> d -> e) -> (a, b, c, d) -> e
+uncurry4 f (a, b, c, d) = f a b c d

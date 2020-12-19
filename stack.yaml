@@ -1,3 +1,5 @@
 resolver: lts-16.24
 packages:
   - .
+extra-deps:
+  - repa-3.4.1.4@sha256:fab455d72a702f2d8a0c9be2de1d45ea1beb8f5949d8173bb95d2e7c515a6225,3323
