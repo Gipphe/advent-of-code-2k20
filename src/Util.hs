@@ -22,8 +22,10 @@ module Util
     , split
     , uncurry3
     , uncurry4
+    , chainl1
     ) where
 
+import Control.Applicative ((<**>), Alternative(..))
 import Control.DeepSeq (NFData, force)
 import Control.Exception (evaluate)
 import Control.Monad.IO.Class (MonadIO(..))
@@ -96,6 +98,7 @@ splitOnDoubleNewline = go []
 
 trim :: String -> String
 trim = dropWhileEnd isSpace . dropWhile isSpace
+{-# INLINE trim #-}
 
 split :: Char -> String -> [String]
 split _ "" = []
@@ -110,9 +113,17 @@ split c s  = cons $ case break (== c) s of
 
 toSnd :: (a -> b) -> a -> (a, b)
 toSnd f a = (a, f a)
+{-# INLINE toSnd #-}
 
 uncurry3 :: (a -> b -> c -> d) -> (a, b, c) -> d
 uncurry3 f (a, b, c) = f a b c
+{-# INLINE uncurry3 #-}
 
 uncurry4 :: (a -> b -> c -> d -> e) -> (a, b, c, d) -> e
 uncurry4 f (a, b, c, d) = f a b c d
+{-# INLINE uncurry4 #-}
+
+chainl1 :: Alternative m => m a -> m (a -> a -> a) -> m a
+chainl1 p op = p <**> rst
+    where rst = (\f y g x -> g (f x y)) <$> op <*> p <*> rst <|> pure id
+{-# INLINE chainl1 #-}
