@@ -15,6 +15,7 @@ import Day15
 import Day16
 import Day17
 import Day18
+import Day19
 import Day2
 import Day3
 import Day4
@@ -45,6 +46,7 @@ days =
     , someDay16
     , someDay17
     , someDay18
+    , someDay19
     ]
 
 main :: IO ()

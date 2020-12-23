@@ -20,6 +20,7 @@ module Util
     , trim
     , toSnd
     , split
+    , splitOn
     , uncurry3
     , uncurry4
     , chainl1
@@ -95,6 +96,13 @@ splitOnDoubleNewline = go []
     go acc []                   = [reverse acc]
     go acc ('\n' : '\n' : rest) = reverse acc : go [] rest
     go acc (x           : rest) = go (x : acc) rest
+
+splitOn :: Char -> String -> [String]
+splitOn c = go []
+  where
+    go acc []                    = [reverse acc]
+    go acc (c' : rest) | c == c' = reverse acc : go [] rest
+    go acc (x : rest)            = go (x : acc) rest
 
 trim :: String -> String
 trim = dropWhileEnd isSpace . dropWhile isSpace
